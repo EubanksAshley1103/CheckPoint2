@@ -12,17 +12,20 @@
 
 #include "patron.h"
 #include "ride.h"
+
 #include <fstream>
 #include <iostream>
+
+#define MAX_RIDES 100
+#define MAX_PATRONS 300
+
 using namespace std;
 
-int userChoice;
-Patron patron;
-Patron newPatron;
-Patron patronList[300];
-int numPatrons;
-string fileName;
-int patronToRemove;
+//  IS THIS NECESSARY??
+
+Patron patron, newPatron, patronList[MAX_PATRONS];
+int numPatrons, userChoice, patronToRemove;
+string patronFile;
 
 void displayMenuOption(){
   //  Displays menu options and prompts user for meny option entry. Returns userChoice- the users integer value entry
@@ -37,7 +40,7 @@ void displayMenuOption(){
 
 int getMenuOption() {
   //  Displays menu options. Prompts user for menu option entry
-  //  include an error message when given invalid input?
+  //  include an error message when given invalid input???
   cin >> userChoice;
   return userChoice;
 }
@@ -52,20 +55,41 @@ void addPatron(Patron patronList[], Patron newPatron, int numPatrons /*supposed 
   cout << "You are adding a patron" << endl;
 }
 
-// instructions say int, will leave as void for now 
-void readExistingPatrons(Patron patronList[], string fileName){
+
+void printFileNotFound(){
+  //  Display file not found message
+  cout << "File not found. Run the program again with the file name on the command line." << endl;
+}
+
+int readExistingPatrons(Patron patronList[], string patronFile){
   /*  reads all exitsting patron data from file name that was porvided on the command 
       line in driver; adds patron data to the patron array
       Parameters: patronArray;  an array of patron objects
                   fileName;     a string pulled from argv in main and passed in
   */
-  cout << "You are reading existing patrons" << endl;
+  //cout << "You are reading existing patrons" << endl;
+  ifstream inputFile;
+
+  int i, idNum[MAX_PATRONS], ticketNum[MAX_PATRONS];
+  string firstN[MAX_PATRONS], lastN[MAX_PATRONS];
+
+  inputFile.open(patronFile);
+
+  if(!inputFile){
+    printFileNotFound();
+    return -1;
+  }
+  else{
+    for(i=0; i<MAX_PATRONS; i++){
+      while(inputFile >> firstN[i] >> lastN[i] >> idNum[i] >> ticketNum[i]);
+      cout << firstN[0] << endl;
+    }
+  }
+
+return 0;
 }
 
-void printFileNotFound(){
-  //  Display file not found message
-  cout << "File not found." << endl;
-}
+
 
 void displayPatrons(Patron patronList[], int numPatrons){
   /*  Displays all patron first and last name by looping through each patron in the 
@@ -147,6 +171,7 @@ void modifyPatron(Patron* patron){
       break;
     default:
       cout << "Invalid input." << endl;
+
   }*/
 }
 
@@ -200,10 +225,18 @@ void editName(Patron* patron){
       the selected name variables using user input
       Parameters: patron; a pointer to the patron object to modify
   */
-  cout << "You are editing name" << endl;
+  //cout << "You are editing name" << endl;
+  displayPatrons(patronList, numPatrons);
+
+  cout << "Would you like to edit the:" << endl;
+  cout << "1. First Name" << endl;
+  cout << "2. Last Name" << endl;
+  cout << "3. Whole Name" << endl;
+  cin >> userChoice;
+
 }
 
-void overwriteFile(Patron patronList[], string fileName, int numPatrons){
+void overwriteFile(Patron patronList[], string patronFile, int numPatrons){
   /*  overwrite the supplied patron file (from the command line arguments) so that the 
       list of patrons is updated. Make sure it follows the same format as the provided 
       patronList.txt file create output stream object using file name. loop through 
@@ -224,8 +257,14 @@ ________________________________________________________________________________
 */
 
 
-int main(){
+int main(int argc, char* argv[]){
 
+  /*if(argc != 2){
+    printFileNotFound();
+    return 0;
+  }*/
+
+  readExistingPatrons(patronList, patronFile);
 
   do
   {
@@ -239,14 +278,14 @@ int main(){
         //calls to add patron function
         createNewPatron();
         addPatron(patronList, newPatron, numPatrons);
-        overwriteFile(patronList, fileName, numPatrons);
+        overwriteFile(patronList, patronFile, numPatrons);
         break;
 
      case 2: 
         //calls to remove patron function
         getPatronOption(patronList, numPatrons);
         removePatron(patronList, patronToRemove, numPatrons);
-        overwriteFile(patronList, fileName, numPatrons);
+        overwriteFile(patronList, patronFile, numPatrons);
         break;
 
       case 3: 
