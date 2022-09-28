@@ -15,9 +15,18 @@
 
 Patron::Patron(){
     //  default constructor. Choose values
+    firstName = "Billy";
+    lastName = "Bob";
+    patronNumber = -29;
+    numTickets = -13;
+    int ticketsRemaining = -31;
+    Ride newRide;
+    patronRides[numTickets] = newRide;
+    // DID I DO THIS RIGHT OR DOES IT NEED BE SETTERS // ARRAY POINTER DONE RIGHT??
+
 }
 
-Patron::Patron(string, string, int, int, int, Ride*){
+Patron::Patron(string newFirst, string newLast, int newPNum, int rideTickets, int ticketsLeft, Ride* newPRides[]){
     /*
         Parameters: first;      string first name to set patron first 
                     last;       string last name to set patron last
@@ -25,14 +34,33 @@ Patron::Patron(string, string, int, int, int, Ride*){
                     numR;       int number of rides the user has tickets for
                     numT;       int number of tickets user has remaining
                     patronR;    pointer to array of rides
+
     */
+   setFirstName(newFirst);
+   setLastName(newLast);
+   setPatronNumber(newPNum);
+   setNumTickets(rideTickets);
+   /*
+   for(int i = 0; i < numTickets; i++){
+        patronRides[i] = newPRides[i];
+    } */
+
+   //   HOW TO DO THE TICKETS REMAINING AND RIDE???
 
 }
 
-Patron::Patron(const Patron&){
+Patron::Patron(const Patron& old){
     //  copy constructor
     //  Make sure to create a loop using the old patron's number of rides to set all the rides in the array. Set all appropriate properties
-
+    setFirstName(old.firstName);
+    setLastName(old.lastName);
+    setPatronNumber(old.patronNumber);
+    setNumTickets(old.numTickets);
+    /*
+    for(int i = 0; i < old.numTickets; i++){
+        patronRides[i] = old.newPRides[i];
+    }*/
+    //  HOW TO DO THE TICKETS REMAINING AND RIDE???
 }
 
 
@@ -73,11 +101,13 @@ void Patron::setPatronNumber(int newPNum){
 Ride* Patron::getPatronRides(){
     //  getter for patron rides array. returns a pointer to the patron's ride array
     //  NEED HELP ON THIS ONE   
-    return &patronRides[0];
+    return patronRides;
 }
-void Patron::addPatronRide(Ride){
+void Patron::addPatronRide(Ride newRide){
     //  add a ride to the patron ride array. Parameters newRide; a Ride to add to the existing rideArray
-    //  NEXT CHECKPOINT
+    //  NEXT CHECKPOINT 
+    patronRides[numTickets] = newRide;
+    numTickets++;
 }
 
 
@@ -91,10 +121,10 @@ int Patron::getNumTickets(){
     //  getter for # of tickets a patron has remaining. returns numTickets; an int
     return numTickets;;
 }
-void Patron::setNumTickets(int ticketsLeft){
+void Patron::setNumTickets(int rideTickets){
     //  setter for # of tickes a patron has remaining 
     //  parameters: num; an integer # of tickets that the patron has remaining
-    numTickets = ticketsLeft;
+    numTickets = rideTickets;
 }
 
 
@@ -115,4 +145,8 @@ int Patron::patronNumber private;
 int Patron::numRides private;
 int Patron::numTickets private;
 Ride Patron::patronRides[100] private;
+
 */
+
+
+
