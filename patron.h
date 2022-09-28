@@ -6,8 +6,10 @@
 #ifndef PATRON_H
 #define PATRON_H
 #include "ride.h"
-#include <iostream>
+#define MAX_RIDES 100
+
 using namespace std;
+
 
 class Patron{
 
@@ -16,12 +18,12 @@ class Patron{
     int patronNumber;
     int numRides;
     int numTickets;
-    Ride patronRides[100];
+    Ride patronRides[MAX_RIDES];
 
     public:
 
         Patron();
-        Patron(string, string, int, int, int, Ride*);
+        Patron(string, string, int, int, int, Ride*[]);
         Patron(const Patron&);
         
         string getFirstName();
