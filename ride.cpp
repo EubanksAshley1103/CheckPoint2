@@ -13,20 +13,28 @@
 
 Ride::Ride(){
     //  Default constructor name is NONE, numTicketsNecessary is 0, heightRestricted is true
+    name = "NONE";
+    numTicketsNecessary = 0;
+    heightRestricted = true;
 }
 
-Ride::Ride(int, string, bool){
+Ride::Ride(int ticketsNeeded, string rideName, bool canRide){
     /*  parameterized constructor; sets passed in variables
         Parameters: numRideTickets  integer argument to set numTickets
                     name            string argument to set rideName
                     height          bool argument to set hightRestricted
     */
+   setNumTicketsNecessary(ticketsNeeded);
+   setRideName(rideName);
+   setHeightRestricted(canRide); //IS THIS ONE RIGHT??
 }
 
-Ride::Ride(const Ride&){
+Ride::Ride(const Ride& old){
     //  Copy constructor; copies properties from one ride class object to another
     //  Paramenters: oldRide Ride address object (&)
-
+    setRideName(old.name);
+    setNumTicketsNecessary(old.numTicketsNecessary);
+    setHeightRestricted(old.heightRestricted);
 }
 
 /*________________________________________________________________________
@@ -63,7 +71,7 @@ bool Ride::getHeightRestricted(){
 void Ride::setHeightRestricted(bool canRide){
     //  set if a ride is height restricted or not
     //  Parameters: heightRestriction;bool argument to set if the ride is height restricted
-    heightRestricted = canRide;
+    heightRestricted = canRide; 
 }
 
 
@@ -76,3 +84,4 @@ int Ride::numTicketsNecessary private
 string Ride::name private
 bool Ride::heightRestricted private 
 */
+
