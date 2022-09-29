@@ -12,17 +12,112 @@
 
 #include "patron.h"
 #include "ride.h"
+
 #include <fstream>
 #include <iostream>
+
+#define NUM_ARGS 2
+#define MAX_RIDES 100
+#define MAX_PATRONS 300
+
 using namespace std;
 
-int userChoice;
-Patron patron;
-Patron newPatron;
-Patron patronList[300];
-int numPatrons;
-string fileName;
-int patronToRemove;
+//  IS THIS NECESSARY??
+
+Patron patron, newPatron, patronList[MAX_PATRONS];
+int numPatrons, userChoice, patronToRemove, idNum, numTickets;
+string filename, firstName, lastName;
+ 
+
+void displayMenuOption();
+int getMenuOption();
+void addPatron(Patron patronList[], Patron newPatron, int numPatrons /*supposed to be pointer*/);
+void printFileNotFound();
+int readExistingPatrons(Patron patronList[], string filename);
+void displayPatrons(Patron patronList[], int numPatrons);
+int getPatronOption(Patron patronList[], int numPatrons);
+void removePatron(Patron patronList[], int patronToRemove, int numPatrons /*supposed to be pointer*/);
+Patron createNewPatron();
+void modifyPatron(Patron* patron);
+void displayModOptions();
+void displayRideMenu();
+int getModOption();
+void addTickets(Patron* patron);
+void addRide(Patron* patron);
+void editName(Patron* patron);
+void overwriteFile(Patron patronList[], string patronFile, int numPatrons);
+
+
+/*
+______________________________________________________________________________________
+--------------------------------------------------------------------------------------
+______________________________________________________________________________________
+*/
+
+
+int main(int argc, char const* argv[]){
+    
+    /*if(argc < NUM_ARGS){
+        cout <<"Correct usage:" << endl;
+        cout << argv[0] <<" filename" << endl;
+        return 0;
+    }
+    */
+    {
+     std::string inputFile = argv[1];
+     
+    }
+    readExistingPatrons(patronList, filename);
+    
+    do
+    {
+    
+        displayMenuOption();
+        userChoice = getMenuOption();
+
+
+        switch (userChoice) {
+          case 1: 
+            //calls to add patron function
+            createNewPatron();
+            addPatron(patronList, newPatron, numPatrons);
+            overwriteFile(patronList, filename, numPatrons);
+            break;
+    
+         case 2: 
+            //calls to remove patron function
+            getPatronOption(patronList, numPatrons);
+            removePatron(patronList, patronToRemove, numPatrons);
+            overwriteFile(patronList, filename, numPatrons);
+            break;
+    
+          case 3: 
+            //calls to modify patron function
+            getPatronOption(patronList, numPatrons);
+            //modifyPatron(patron);
+            //modifyPatron();
+            break;
+    
+          case 4: 
+            //calls to view patron function
+            displayPatrons(patronList, numPatrons);
+            break;
+    
+          case 0: 
+            return 0;
+            //exits funtction
+            break;
+    
+          default: 
+            cout << "Please Enter Valid Option." << endl;
+        }
+        
+      } while (userChoice =! 0);
+    
+
+}
+
+
 
 void displayMenuOption(){
   //  Displays menu options and prompts user for meny option entry. Returns userChoice- the users integer value entry
@@ -37,7 +132,7 @@ void displayMenuOption(){
 
 int getMenuOption() {
   //  Displays menu options. Prompts user for menu option entry
-  //  include an error message when given invalid input?
+  //  include an error message when given invalid input???
   cin >> userChoice;
   return userChoice;
 }
@@ -52,20 +147,43 @@ void addPatron(Patron patronList[], Patron newPatron, int numPatrons /*supposed 
   cout << "You are adding a patron" << endl;
 }
 
-// instructions say int, will leave as void for now 
-void readExistingPatrons(Patron patronList[], string fileName){
+
+void printFileNotFound(){
+  //  Display file not found message
+  cout << "File not found. Run the program again with the file name on the command line." << endl;
+}
+
+int readExistingPatrons(Patron patronList[], string filename){
   /*  reads all exitsting patron data from file name that was porvided on the command 
       line in driver; adds patron data to the patron array
       Parameters: patronArray;  an array of patron objects
                   fileName;     a string pulled from argv in main and passed in
   */
-  cout << "You are reading existing patrons" << endl;
+  
+    ifstream inFile(filename.c_str());
+        int tempId, tempTnum, i = 0;
+        string tempFirst, tempLast;
+      
+        if(!inFile){
+            printFileNotFound();
+            exit(0);
+        }
+        else{
+            do{
+                inFile >> tempFirst >> tempLast >> tempId >> tempTnum;
+                if(inFile){
+                    patronList[i].setFirstName(tempFirst);
+                    patronList[i].setLastName(tempLast);
+                    i++;
+                }
+            }while(inFile && i < MAX_PATRONS);
+                inFile.close();
+            }
+    return i;
+
 }
 
-void printFileNotFound(){
-  //  Display file not found message
-  cout << "File not found." << endl;
-}
+
 
 void displayPatrons(Patron patronList[], int numPatrons){
   /*  Displays all patron first and last name by looping through each patron in the 
@@ -73,7 +191,10 @@ void displayPatrons(Patron patronList[], int numPatrons){
       Parameters: patronArray;  an array of patron objects
                   numPatrons;   an int value of the number of patrons in the array
   */
-  cout << "You are displaying patrons" << endl;
+  //cout << "You are displaying patrons" << endl;
+  for(int i=0; 0<numPatrons; i++){
+    //patronList->displayName();
+  }
 }
 
 int getPatronOption(Patron patronList[], int numPatrons){
@@ -102,8 +223,7 @@ Patron createNewPatron(){
   //  creates a new patron object. prompts the user for input and collects it, sets the new
   //  patrons info using the user's input
   //  returns: newPatron; a patron object
-  string firstName, lastName;
-  int idNum, numTickets;
+  
 
   cout << "Let's add a patron to the system!" << endl;
   cout << "Enter patron's fist and last name:" << endl;
@@ -169,18 +289,24 @@ void displayRideMenu(){
 int getModOption(){
   //  Displays ride menu options. Prompts user for menu option entry
   //  Returns:  userChoice; the users integer value entry
-  cout << "You are getting mod options" << endl;
+ // cout << "You are getting mod options" << endl;
+  
   cin >> userChoice;
   return userChoice;
 }
 
 void addTickets(Patron* patron){
-  /*  Add a number of tickets to a patron Prompt the user for the number of tickets 
+  /*  Add a number of tickets to a patron. Prompt the user for the number of tickets 
       they'd like to add set the patron's number of tickets to be equal to the sum of 
       the existing patron tickets and the tickets to add
       Parameters: patron; a pointer to the patron object to modify
   */
-  cout << "You are adding tickets" << endl;
+  cout << "How many tickets would you like to add?" << endl;
+  int ticketAdded;
+  cin >> ticketAdded;
+  numTickets += ticketAdded;
+  //numTickets.setNumTickets(numTickets);
+  
 }
 
 void addRide(Patron* patron){
@@ -200,10 +326,36 @@ void editName(Patron* patron){
       the selected name variables using user input
       Parameters: patron; a pointer to the patron object to modify
   */
-  cout << "You are editing name" << endl;
+  //cout << "You are editing name" << endl;
+  displayPatrons(patronList, numPatrons);
+
+  cout << "Would you like to edit the:" << endl;
+  cout << "1. First Name" << endl;
+  cout << "2. Last Name" << endl;
+  cout << "3. Whole Name" << endl;
+  cin >> userChoice;
+  
+  switch(userChoice){
+      case 1:
+        cin >> firstName;
+        //firstName.setFirstName();
+        break;
+      case 2:
+        cin >> lastName;
+        //lastName.setLastName():
+        break;
+      case 3:
+        cin >> firstName >> lastName;
+        //firstName.setFirstName();
+        //lastName.setLastName();
+        break;
+      default:
+        cout << "Please enter one of the options." << endl;
+  }
+
 }
 
-void overwriteFile(Patron patronList[], string fileName, int numPatrons){
+void overwriteFile(Patron patronList[], string patronFile, int numPatrons){
   /*  overwrite the supplied patron file (from the command line arguments) so that the 
       list of patrons is updated. Make sure it follows the same format as the provided 
       patronList.txt file create output stream object using file name. loop through 
@@ -213,64 +365,7 @@ void overwriteFile(Patron patronList[], string fileName, int numPatrons){
                   fileName;     string name of the file from the command line
                   numPatron;    number of patrons in array
   */
-  cout << "You are overwriting file" << endl;
-}
-
-
-/*
-______________________________________________________________________________________
---------------------------------------------------------------------------------------
-______________________________________________________________________________________
-*/
-
-
-int main(){
-
-
-  do
-  {
-    
-    displayMenuOption();
-    userChoice = getMenuOption();
-
-
-    switch (userChoice) {
-      case 1: 
-        //calls to add patron function
-        createNewPatron();
-        addPatron(patronList, newPatron, numPatrons);
-        overwriteFile(patronList, fileName, numPatrons);
-        break;
-
-     case 2: 
-        //calls to remove patron function
-        getPatronOption(patronList, numPatrons);
-        removePatron(patronList, patronToRemove, numPatrons);
-        overwriteFile(patronList, fileName, numPatrons);
-        break;
-
-      case 3: 
-        //calls to modify patron function
-        getPatronOption(patronList, numPatrons);
-        //modifyPatron(patron);
-        //modifyPatron();
-        break;
-
-      case 4: 
-        //calls to view patron function
-        displayPatrons(patronList, numPatrons);
-        break;
-
-      case 0: 
-        return 0;
-        //exits funtction
-        break;
-
-      default: 
-        cout << "Please Enter Valid Option." << endl;
+    for(int i=0; i<numPatrons; i++){
+        cout << patronList[i] << endl;  
     }
-
-  } while (userChoice =! 0);
-
-
 }
